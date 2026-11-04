@@ -25,6 +25,9 @@ export type Palette = {
   warn: string;
   scrim: string;
   shadow: string;
+  glass: string;
+  glassLine: string;
+  glassTint: 'light' | 'dark';
 };
 
 export const light: Palette = {
@@ -44,6 +47,9 @@ export const light: Palette = {
   warn: '#8A5B00',
   scrim: 'rgba(17,17,20,0.32)',
   shadow: '#111114',
+  glass: 'rgba(255,255,255,0.72)',
+  glassLine: 'rgba(17,17,20,0.08)',
+  glassTint: 'light',
 };
 
 export const dark: Palette = {
@@ -63,6 +69,9 @@ export const dark: Palette = {
   warn: '#E3B341',
   scrim: 'rgba(0,0,0,0.55)',
   shadow: '#000000',
+  glass: 'rgba(22,24,27,0.66)',
+  glassLine: 'rgba(255,255,255,0.09)',
+  glassTint: 'dark',
 };
 
 export function palette(name: ThemeName): Palette {
@@ -105,3 +114,10 @@ export const motion = {
   base: 200,
   slow: 280,
 };
+
+/** The floating bar sits this far above the safe-area edge. */
+export const navHeight = 62;
+export const navGap = 12;
+
+/** Monospace advance width per point of font size — used by the editor ruler. */
+export const monoRatio = 0.6;
