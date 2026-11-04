@@ -2,7 +2,7 @@
   "expo": {
     "name": "Anbar",
     "slug": "anbar",
-    "version": "2.2.1",
+    "version": "2.2.2",
     "orientation": "portrait",
     "scheme": "anbar",
     "userInterfaceStyle": "automatic",
@@ -18,7 +18,7 @@
     ],
     "android": {
       "package": "tech.amirmahdi.anbar",
-      "versionCode": 221,
+      "versionCode": 222,
       "predictiveBackGestureEnabled": true,
       "blockedPermissions": [
         "android.permission.INTERNET",
