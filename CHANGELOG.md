@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.2.1 — build fix
+
+- The trim script no longer insists on Gradle flags the Expo template stopped emitting; the
+  expo-build-properties plugin sets them, and the script now only requires the ABI filter, which it
+  verifies before failing.
+- Dropped the `edgeToEdgeEnabled` key that Android 16 made obsolete.
+- First release that actually ships the trimmed APK.
+
 ## 2.2.0 — liquid glass, a publish tab, and a much smaller APK
 
 **Size**
