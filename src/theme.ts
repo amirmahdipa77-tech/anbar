@@ -116,8 +116,20 @@ export const motion = {
 };
 
 /** The floating bar sits this far above the safe-area edge. */
-export const navHeight = 62;
-export const navGap = 12;
+export const navHeight = 64;
+export const navGap = 14;
+
+/**
+ * One spacing grid for every screen. Headers, rows and cards all snap to these
+ * numbers so edges line up vertically from screen to screen.
+ */
+export const layout = {
+  gutter: space.lg,      // 16 — the single left/right margin
+  slot: 40,              // touch target in a header
+  rowHeight: 48,         // list row
+  headerRow: 52,         // header content height, excluding the safe area
+  dividerInset: space.lg,
+};
 
 /** Monospace advance width per point of font size — used by the editor ruler. */
 export const monoRatio = 0.6;
