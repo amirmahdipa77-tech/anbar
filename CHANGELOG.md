@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.2.2 — the size fix that actually lands
+
+- `reactNativeArchitectures` now pins the build to `arm64-v8a`. That single line is where the
+  megabytes were: the previous APK still carried four sets of native libraries.
+- R8 full mode, minification, resource shrinking and PNG crunching are asserted, not assumed.
+- The trim script now edits `gradle.properties` (the file the React Native template actually reads)
+  instead of guessing at a `defaultConfig` block.
+
 ## 2.2.1 — build fix
 
 - The trim script no longer insists on Gradle flags the Expo template stopped emitting; the
