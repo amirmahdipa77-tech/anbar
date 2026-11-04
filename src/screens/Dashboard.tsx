@@ -35,6 +35,7 @@ export function DashboardScreen({
   onSeed,
   onSettings,
   locked,
+  navPadding,
 }: {
   projects: ProjectSummary[];
   onOpen: (project: Project) => void;
@@ -44,6 +45,7 @@ export function DashboardScreen({
   onSeed: () => Promise<void>;
   onSettings: () => void;
   locked: boolean;
+  navPadding: number;
 }) {
   const { palette } = useTheme();
   const [query, setQuery] = useState('');
@@ -114,8 +116,8 @@ export function DashboardScreen({
         large
         actions={
           <>
-            {locked ? <IconButton name="lock-closed" onPress={onSettings} accessibilityLabel="Lock settings" /> : null}
-            <IconButton name="settings-outline" onPress={onSettings} accessibilityLabel="Settings" />
+            {locked ? <IconButton name="lock-closed" onPress={onSettings} accessibilityLabel="App lock" /> : null}
+            <IconButton name="add" onPress={openCreate} accessibilityLabel="New project" size={22} />
           </>
         }
       />
@@ -123,7 +125,7 @@ export function DashboardScreen({
       <FlatList
         data={filtered}
         keyExtractor={(item) => item.project.id}
-        contentContainerStyle={{ paddingBottom: 120 }}
+        contentContainerStyle={{ paddingBottom: navPadding + 24 }}
         ListHeaderComponent={
           <View style={{ paddingHorizontal: space.lg, paddingTop: space.md }}>
             <View
@@ -213,11 +215,6 @@ export function DashboardScreen({
         )}
       />
 
-      {projects.length > 0 ? (
-        <View style={{ position: 'absolute', left: space.lg, right: space.lg, bottom: space.xl }}>
-          <Button label="New project" variant="primary" icon="add" onPress={openCreate} />
-        </View>
-      ) : null}
 
       <Sheet
         visible={creating || editing !== null}
