@@ -93,7 +93,7 @@ Anbar has **no build step and no dependencies**. Pick whichever fits:
 
 ### 1. Download a release (fastest)
 
-Every version is attached to [Releases](../../releases/latest):
+Every version is attached to [Releases](https://github.com/amirmahdipa77-tech/anbar/releases/latest):
 
 | File | What it is | How to use it |
 |---|---|---|
@@ -102,9 +102,16 @@ Every version is attached to [Releases](../../releases/latest):
 
 **Windows:** double-click the `.html` file and pin it to the taskbar, or unzip the folder and
 open `index.html`. **Android:** open the `.html` file from a file manager that can hand it to a
-browser, or use the hosted URL below and install it as an app.
+browser, or open **https://amirmahdipa77-tech.github.io/anbar/** in Chrome and install it from
+the menu.
 
-### 2. Host it, then install it as an app
+### 2. Open the hosted version (nothing to install)
+
+**https://amirmahdipa77-tech.github.io/anbar/** — served by GitHub Pages, and it still stores
+everything locally in your own browser. On Android open it in Chrome and choose *Add to Home
+screen → Install*; on Windows use the install icon in Edge or Chrome.
+
+### 3. Run it locally and install it as an app
 
 The install prompt and the offline service worker need `http(s)`, so serve the folder:
 
@@ -119,7 +126,7 @@ python3 -m http.server 8080      # open http://localhost:8080
 - **Android (Chrome):** open the URL → menu → *Add to Home screen* → *Install*.
 - After installing, it opens with no network at all.
 
-### 3. Build the single file yourself
+### 4. Build the single file yourself
 
 ```bash
 python3 tools/build_single_file.py     # writes dist/anbar.html
@@ -238,13 +245,14 @@ Built by **Amirmahdi Pop** · [github.com/amirmahdipa77-tech](https://github.com
 
 **نصب روی ویندوز و اندروید**
 
-- **ساده‌ترین راه:** از بخش [Releases](../../releases/latest) فایل `anbar-1.1.0.html` را دانلود کن و
+- **ساده‌ترین راه:** از بخش [Releases](https://github.com/amirmahdipa77-tech/anbar/releases/latest) فایل `anbar-1.1.0.html` را دانلود کن و
   دوبار کلیک کن؛ کل برنامه در یک فایل ۱۰۴ کیلوبایتی است و بدون سرور و اینترنت کار می‌کند.
   نسخهٔ zip هم برای وقتی است که ساختار پوشه‌ای را ترجیح می‌دهی.
 - **ویندوز (نصب واقعی):** در پوشهٔ مخزن `python3 -m http.server 8080` را اجرا کن، آدرس
   `http://localhost:8080` را در Edge یا Chrome باز کن و از نوار آدرس «Install» را بزن؛ پنجرهٔ
   مستقل با آیکن در استارت‌منو و تسک‌بار می‌گیری.
-- **اندروید:** همان آدرس را در Chrome باز کن → منو → «Add to Home screen» → «Install».
+- **اندروید:** آدرس **https://amirmahdipa77-tech.github.io/anbar/** را در Chrome باز کن →
+  منو → «Add to Home screen» → «Install»؛ داده‌ها همان‌جا روی گوشی خودت می‌مانند.
 - بعد از نصب، حتی بدون اینترنت هم باز می‌شود.
 
 **میان‌برهای کلیدی:** `Ctrl/⌘+S` ذخیره فایل، `Ctrl/⌘+Enter` پنجره کامیت، `Ctrl/⌘+K` جست‌وجوی
