@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import React, {
   createContext,
   useCallback,
@@ -259,7 +260,15 @@ export function SectionLabel({ children }: { children: string }) {
 
 /* ------------------------------------------------------------------- cards */
 
-export function Card({ children, style }: { children: React.ReactNode; style?: StyleProp<ViewStyle> }) {
+export function Card({
+  children,
+  style,
+  sheen = true,
+}: {
+  children: React.ReactNode;
+  style?: StyleProp<ViewStyle>;
+  sheen?: boolean;
+}) {
   const { palette } = useTheme();
   return (
     <View
@@ -269,6 +278,19 @@ export function Card({ children, style }: { children: React.ReactNode; style?: S
         style,
       ]}
     >
+      {sheen ? (
+        <LinearGradient
+          pointerEvents="none"
+          colors={
+            palette.glassTint === 'dark'
+              ? ['rgba(255,255,255,0.05)', 'rgba(255,255,255,0)']
+              : ['rgba(255,255,255,0.9)', 'rgba(255,255,255,0)']
+          }
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0.7, y: 1 }}
+          style={StyleSheet.absoluteFill}
+        />
+      ) : null}
       {children}
     </View>
   );
@@ -679,6 +701,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.card,
     borderWidth: StyleSheet.hairlineWidth,
     padding: space.lg,
+    overflow: 'hidden',
   },
   chip: {
     flexDirection: 'row',
