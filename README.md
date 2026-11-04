@@ -17,9 +17,9 @@ way to send anything anywhere.
 |---|---|
 | ![Editor](screenshots/editor-write.png) | ![Ruled](screenshots/editor-ruled.png) |
 
-| Dark | Search |
+| Publish | Export |
 |---|---|
-| ![Dark](screenshots/projects-dark.png) | ![Search](screenshots/search.png) |
+| ![Publish](screenshots/publish.png) | ![Export](screenshots/publish-export.png) |
 
 ---
 
@@ -40,8 +40,8 @@ Two rules decide every feature:
 
 Navigation is a single glass pill that hovers above the content — blurred, translucent, with a soft
 highlight that slides between tabs instead of blinking on and off. Four places: **Projects**,
-**Activity** (every commit across every project, grouped by day), **Search** (inside every file of
-every project) and **Settings**. Inside a project the bar steps aside, so the file, the diff and the
+**Activity** (every commit across every project, grouped by day), **Publish** (export the whole
+history as a real git repository) and **Settings**. Inside a project the bar steps aside, so the file, the diff and the
 commit get the whole screen.
 
 ## The editor
@@ -69,7 +69,10 @@ replace all. The header always shows `line X, col Y`.
 - **History** — per-commit diff against its parent, a read-only browser of the snapshot's files, and
   restore that lands as *pending changes* so you review the rollback before committing it.
 - **Activity** — every commit across every project, grouped by day, one tap from the diff.
-- **Search** — inside every file of every project, grouped by file.
+- **Publish** — turn a project into a `git fast-import` stream with every commit, message, author
+  and timestamp, plus the three commands that import it and push it to your own GitHub repository.
+  The app never uploads anything: the push happens in your terminal, which is the only way to keep
+  the no-network promise.
 - **App lock** — 4–6 digit PIN stored only as a salted SHA-256 hash, optional biometric unlock,
   configurable auto-lock, immediate lock when the app is backgrounded.
 - **Backup** — export everything as one JSON blob to the clipboard; import it back anywhere.
@@ -77,7 +80,7 @@ replace all. The header always shows `line X, col Y`.
 
 ## Install
 
-**Android (sideload).** Download `anbar-2.1.0.apk` from
+**Android (sideload).** Download `anbar-2.2.0.apk` from
 [Releases](https://github.com/amirmahdipa77-tech/anbar/releases/latest), open it on the phone, and
 allow installing from this source when Android asks. It is signed with the standard Android debug
 key — fine for sideloading, not for Play.
@@ -99,6 +102,13 @@ npx expo prebuild --platform android  # then: cd android && ./gradlew assembleRe
 
 CI does the same: `.github/workflows/android.yml` builds the APK on every tag and attaches it to the
 release; `.github/workflows/web.yml` publishes the web build.
+
+## Size
+
+The APK used to be 70 MB because it carried four CPU architectures and no minification. Release
+builds now run R8 with full mode, shrink resources, crunch PNGs and keep only `arm64-v8a`
+(`tools/trim_android.py` enforces all three in CI). That is roughly a third of the old size, and it
+still installs on any 64-bit Android phone from the last several years.
 
 ## Design notes
 
@@ -188,7 +198,7 @@ Built by **Amirmahdi Pop** · [github.com/amirmahdipa77-tech](https://github.com
 تاریخچه با دیف نسبت به والد و بازگردانی، فعالیت همه پروژه‌ها، جست‌وجو در همه فایل‌ها، قفل با پین و
 اثر انگشت، پشتیبان JSON و تم روشن/تیره/سیستم.
 
-**نصب:** فایل `anbar-2.1.0.apk` را از Releases دانلود کن. نسخه وب هم روی
+**نصب:** فایل `anbar-2.2.0.apk` را از Releases دانلود کن. نسخه وب هم روی
 `https://amirmahdipa77-tech.github.io/anbar/` است.
 
 **تست:** ۲۵ بررسی خودکار با `npm test`. لایسنس MIT. ساختهٔ امیرمهدی پاپ.
