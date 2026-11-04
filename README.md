@@ -79,37 +79,51 @@ that respect the keyboard, and toasts that never block what you are doing.
 |---|---|
 | ![Editor](screenshots/project-code.png) | ![Diff](screenshots/changes-diff.png) |
 
-| History | Phone |
+| History | Light theme |
 |---|---|
-| ![History](screenshots/history.png) | ![Mobile](screenshots/mobile.png) |
+| ![History](screenshots/history.png) | ![Light theme](screenshots/light.png) |
+
+| Phone |
+|---|
+| ![Mobile](screenshots/mobile.png) |
 
 ## Install and run
 
-Anbar has **no build step and no dependencies**. Three ways to use it:
+Anbar has **no build step and no dependencies**. Pick whichever fits:
 
-**1. Straight from the folder (simplest).** Download the repository and open `index.html` in your
-browser. Everything works except the install prompt and the service worker, which browsers only
-allow over `http(s)`.
+### 1. Download a release (fastest)
 
-**2. As a local server** (needed for offline install):
+Every version is attached to [Releases](../../releases/latest):
+
+| File | What it is | How to use it |
+|---|---|---|
+| `anbar-1.1.0.html` | the whole app in **one file** (104 KB) | double-click it. That's it — works offline, no server |
+| `anbar-1.1.0.zip` | the same app as a normal folder | unzip, open `index.html` |
+
+**Windows:** double-click the `.html` file and pin it to the taskbar, or unzip the folder and
+open `index.html`. **Android:** open the `.html` file from a file manager that can hand it to a
+browser, or use the hosted URL below and install it as an app.
+
+### 2. Host it, then install it as an app
+
+The install prompt and the offline service worker need `http(s)`, so serve the folder:
 
 ```bash
 git clone https://github.com/amirmahdipa77-tech/anbar.git
 cd anbar
-python3 -m http.server 8080
-# then open http://localhost:8080
+python3 -m http.server 8080      # open http://localhost:8080
 ```
 
-**3. As an installed app**
+- **Windows (Edge or Chrome):** open the URL → address-bar install icon, or *Apps* →
+  *Install this site as an app*. You get a real window, a Start-menu entry and a taskbar icon.
+- **Android (Chrome):** open the URL → menu → *Add to Home screen* → *Install*.
+- After installing, it opens with no network at all.
 
-- **Windows:** open the local URL in Edge or Chrome → *Apps* → *Install this site as an app*
-  (or the install icon in the address bar). You get a desktop window, a Start-menu entry and a
-  taskbar icon.
-- **Android:** open the same URL in Chrome → menu → *Add to Home screen* → *Install*.
-- Once installed, it runs with no network at all.
+### 3. Build the single file yourself
 
-Hosting it anywhere static (GitHub Pages, a LAN box, a USB stick) works the same way — the
-service worker pre-caches the whole app on first load.
+```bash
+python3 tools/build_single_file.py     # writes dist/anbar.html
+```
 
 ## Keyboard shortcuts
 
@@ -121,6 +135,19 @@ service worker pre-caches the whole app on first load.
 | `Tab` (in the editor) | Insert two spaces |
 | `Esc` | Close a dialog |
 
+## Design
+
+The look is deliberately quiet: **frosted glass panels** (`backdrop-filter: blur(22px)
+saturate(180%)`) over a soft gradient, hairline borders, and iOS spacing and type
+(`-apple-system`, tight tracking, 20 px radii). Lists behave like Telegram — compact rows,
+rounded selection, a coloured dot per project — while buttons, segmented tabs, sheets and toasts
+follow iOS conventions, including a bottom sheet on phones.
+
+Motion is restrained on purpose: springs land in 300–400 ms, cards lift 2 px, buttons squash to
+0.965, and `prefers-reduced-motion` turns everything off. The theme follows your system by
+default and can be pinned to dark or light in **Settings → Appearance**. When the device asks for
+reduced transparency, the glass falls back to solid panels.
+
 ## How it works
 
 ```
@@ -130,7 +157,8 @@ index.html
 ├── assets/js/app.js     UI: router, rendering, modals, editor, actions
 ├── assets/css/anbar.css design system, jelly springs, responsive layout
 ├── manifest.webmanifest + sw.js   installable, offline shell
-└── tools/make_icons.py  draws the app icons with PIL (no binary assets to trust)
+├── tools/make_icons.py  draws the app icons with PIL (no binary assets to trust)
+└── tools/build_single_file.py  bundles everything into dist/anbar.html
 ```
 
 **Storage model.** Three object stores. `repos` holds project metadata and a pointer to HEAD.
@@ -210,11 +238,13 @@ Built by **Amirmahdi Pop** · [github.com/amirmahdipa77-tech](https://github.com
 
 **نصب روی ویندوز و اندروید**
 
-- **ویندوز:** پوشه را دانلود کن و `index.html` را باز کن، یا برای نصب واقعی در پوشه‌اش
-  `python3 -m http.server 8080` را اجرا کن و در Edge یا Chrome آدرس `http://localhost:8080`
-  را باز کن و از منوی برنامه‌ها «Install this site as an app» را بزن. یک پنجره مستقل با آیکن
-  در استارت‌منو و تسک‌بار می‌گیری.
-- **اندروید:** همان آدرس را در Chrome باز کن، منو → «Add to Home screen» → «Install».
+- **ساده‌ترین راه:** از بخش [Releases](../../releases/latest) فایل `anbar-1.1.0.html` را دانلود کن و
+  دوبار کلیک کن؛ کل برنامه در یک فایل ۱۰۴ کیلوبایتی است و بدون سرور و اینترنت کار می‌کند.
+  نسخهٔ zip هم برای وقتی است که ساختار پوشه‌ای را ترجیح می‌دهی.
+- **ویندوز (نصب واقعی):** در پوشهٔ مخزن `python3 -m http.server 8080` را اجرا کن، آدرس
+  `http://localhost:8080` را در Edge یا Chrome باز کن و از نوار آدرس «Install» را بزن؛ پنجرهٔ
+  مستقل با آیکن در استارت‌منو و تسک‌بار می‌گیری.
+- **اندروید:** همان آدرس را در Chrome باز کن → منو → «Add to Home screen» → «Install».
 - بعد از نصب، حتی بدون اینترنت هم باز می‌شود.
 
 **میان‌برهای کلیدی:** `Ctrl/⌘+S` ذخیره فایل، `Ctrl/⌘+Enter` پنجره کامیت، `Ctrl/⌘+K` جست‌وجوی
