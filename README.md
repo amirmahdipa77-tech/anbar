@@ -80,7 +80,7 @@ replace all. The header always shows `line X, col Y`.
 
 ## Install
 
-**Android (sideload).** Download `anbar-2.2.2.apk` from
+**Android (sideload).** Download `anbar-2.3.0.apk` from
 [Releases](https://github.com/amirmahdipa77-tech/anbar/releases/latest), open it on the phone, and
 allow installing from this source when Android asks. It is signed with the standard Android debug
 key — fine for sideloading, not for Play.
@@ -198,7 +198,7 @@ Built by **Amirmahdi Pop** · [github.com/amirmahdipa77-tech](https://github.com
 تاریخچه با دیف نسبت به والد و بازگردانی، فعالیت همه پروژه‌ها، جست‌وجو در همه فایل‌ها، قفل با پین و
 اثر انگشت، پشتیبان JSON و تم روشن/تیره/سیستم.
 
-**نصب:** فایل `anbar-2.2.2.apk` را از Releases دانلود کن. نسخه وب هم روی
+**نصب:** فایل `anbar-2.3.0.apk` را از Releases دانلود کن. نسخه وب هم روی
 `https://amirmahdipa77-tech.github.io/anbar/` است.
 
 **تست:** ۲۵ بررسی خودکار با `npm test`. لایسنس MIT. ساختهٔ امیرمهدی پاپ.
