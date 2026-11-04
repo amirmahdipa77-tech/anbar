@@ -6,7 +6,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Animated, Easing, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { navGap, navHeight, palette as paletteFor, space } from '../theme';
-import { useTheme } from './kit';
+import { Touch, useTheme } from './kit';
 
 export type TabKey = 'projects' | 'activity' | 'publish' | 'settings';
 
@@ -102,11 +102,11 @@ export function BottomNav({
               const active = item.key === value;
               const count = badge?.[item.key] ?? 0;
               return (
-                <Pressable
+                <Touch
                   key={item.key}
+                  round
                   accessibilityRole="tab"
                   accessibilityLabel={item.label}
-                  accessibilityState={{ selected: active }}
                   onPress={() => {
                     if (active) return;
                     if (Platform.OS !== 'web') {
@@ -138,7 +138,7 @@ export function BottomNav({
                   >
                     {item.label}
                   </Text>
-                </Pressable>
+                </Touch>
               );
             })}
           </View>
@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
     alignItems: 'stretch',
   },
   shadow: {
-    borderRadius: 22,
+    borderRadius: 999,
     ...Platform.select({
       ios: {
         shadowColor: '#000',
@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
     }),
   },
   bar: {
-    borderRadius: 22,
+    borderRadius: 999,
     borderWidth: StyleSheet.hairlineWidth,
     overflow: 'hidden',
     height: navHeight,
@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
     left: 5,
     top: 5,
     bottom: 5,
-    borderRadius: 18,
+    borderRadius: 999,
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: 'rgba(255,255,255,0.10)',
   },
@@ -200,7 +200,9 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    height: navHeight - 8,
+    height: navHeight - 10,
+    borderRadius: 999,
+    overflow: 'hidden',
   },
   badge: {
     position: 'absolute',
