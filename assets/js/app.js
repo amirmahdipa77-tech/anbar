@@ -20,7 +20,7 @@
     diffPath: null,
     openDirs: Object.create(null),
     query: '',
-    settings: { author: 'You', theme: 'dark' },
+    settings: { author: 'You', theme: 'system' },
     installEvent: null
   };
 
@@ -88,8 +88,27 @@
   function saveSettings() {
     try { global.localStorage.setItem('anbar-settings', JSON.stringify(state.settings)); } catch (err) { /* private mode */ }
   }
+  function systemTheme() {
+    try {
+      return global.matchMedia && global.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+    } catch (err) { return 'dark'; }
+  }
+
+  function resolvedTheme() {
+    var choice = state.settings.theme || 'system';
+    return choice === 'system' ? systemTheme() : choice;
+  }
+
   function applyTheme() {
-    document.documentElement.setAttribute('data-theme', state.settings.theme || 'dark');
+    document.documentElement.setAttribute('data-theme', resolvedTheme());
+  }
+
+  function watchSystemTheme() {
+    if (!global.matchMedia) return;
+    var query = global.matchMedia('(prefers-color-scheme: light)');
+    var handler = function () { if ((state.settings.theme || 'system') === 'system') applyTheme(); };
+    if (query.addEventListener) query.addEventListener('change', handler);
+    else if (query.addListener) query.addListener(handler);
   }
 
   /* --------------------------------------------------------------- toasts */
@@ -142,6 +161,15 @@
         if (field.type === 'textarea') {
           input = el('textarea', 'field__input');
           input.rows = field.rows || 4;
+        } else if (field.type === 'select') {
+          input = el('select', 'field__input');
+          (field.options || []).forEach(function (option) {
+            var value = typeof option === 'string' ? option : option.value;
+            var label = typeof option === 'string' ? option : option.label;
+            var node = el('option', '', label);
+            node.value = value;
+            input.appendChild(node);
+          });
         } else {
           input = el('input', 'field__input');
           input.type = field.type || 'text';
@@ -179,7 +207,7 @@
       });
 
       root.appendChild(card);
-      var first = card.querySelector('input, textarea');
+      var first = card.querySelector('input, textarea, select');
       if (first) { first.focus(); if (first.select) first.select(); }
     });
   }
@@ -473,7 +501,8 @@
     var nameRow = el('div', 'repo__nameRow');
     nameRow.appendChild(el('span', 'repo__dot repo__dot--' + (repo.accent || 'violet')));
     nameRow.appendChild(el('h1', 'repo__name', repo.name));
-    var branch = el('span', 'chip chip--branch', '⌥ main');
+    var branch = el('span', 'chip chip--branch');
+    branch.innerHTML = '<span class="chip__ico">' + ICONS.branch + '</span>main';
     nameRow.appendChild(branch);
     left.appendChild(nameRow);
     left.appendChild(el('p', 'repo__desc', repo.description || 'No description yet.'));
@@ -1064,13 +1093,24 @@
         title: 'Settings',
         fields: [
           { name: 'author', label: 'Default author name', value: state.settings.author },
-          { name: 'theme', label: 'Theme (dark or light)', value: state.settings.theme }
+          {
+            name: 'theme',
+            label: 'Appearance',
+            type: 'select',
+            value: state.settings.theme || 'system',
+            options: [
+              { value: 'system', label: 'Match the system' },
+              { value: 'dark', label: 'Dark' },
+              { value: 'light', label: 'Light' }
+            ]
+          }
         ],
         submitLabel: 'Save'
       });
       if (!values) return;
       state.settings.author = values.author || 'You';
-      state.settings.theme = (values.theme || 'dark').toLowerCase() === 'light' ? 'light' : 'dark';
+      var picked = String(values.theme || 'system').toLowerCase();
+      state.settings.theme = ['system', 'dark', 'light'].indexOf(picked) === -1 ? 'system' : picked;
       saveSettings();
       applyTheme();
       toast('Settings saved', 'ok');
@@ -1158,6 +1198,7 @@
     document.addEventListener('click', onClick);
     document.addEventListener('keydown', onKey);
     window.addEventListener('hashchange', route);
+    watchSystemTheme();
 
     window.addEventListener('beforeinstallprompt', function (event) {
       event.preventDefault();
