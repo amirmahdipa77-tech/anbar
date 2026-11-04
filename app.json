@@ -2,7 +2,7 @@
   "expo": {
     "name": "Anbar",
     "slug": "anbar",
-    "version": "2.1.0",
+    "version": "2.2.0",
     "orientation": "portrait",
     "scheme": "anbar",
     "userInterfaceStyle": "automatic",
@@ -18,7 +18,7 @@
     ],
     "android": {
       "package": "tech.amirmahdi.anbar",
-      "versionCode": 210,
+      "versionCode": 220,
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": true,
       "blockedPermissions": [
@@ -41,7 +41,18 @@
       "backgroundColor": "#0F1012"
     },
     "plugins": [
-      "expo-splash-screen"
+      "expo-splash-screen",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "enableProguardInReleaseBuilds": true,
+            "enableShrinkResourcesInReleaseBuilds": true,
+            "enablePngCrunchInReleaseBuilds": true,
+            "usesCleartextTraffic": false
+          }
+        }
+      ]
     ],
     "extra": {
       "privacy": "No network permission, no accounts, no analytics."
