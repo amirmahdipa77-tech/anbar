@@ -17,8 +17,14 @@ import { WorkspaceScreen } from './src/screens/Workspace';
 import { DEFAULT_SETTINGS, loadSettings, saveSettings } from './src/security/pin';
 import * as db from './src/storage/db';
 import type { ActivityEntry } from './src/storage/db';
+import { layout } from './src/theme';
+import { countOps, diffLines } from './src/core/diff';
 import type { Change, Commit, Project, ProjectData, Settings } from './src/types';
 import { BottomNav, useNavPadding, type TabKey } from './src/ui/BottomNav';
+import { CommandPalette, type PaletteAction } from './src/ui/CommandPalette';
+import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Pressable } from 'react-native';
 import { ThemeProvider, ToastProvider } from './src/ui/kit';
 
 type ToastValue = (message: string, kind?: 'info' | 'success' | 'error') => void;
@@ -31,6 +37,20 @@ type Route =
   | { name: 'viewer'; title: string; subtitle?: string; content: string }
   | { name: 'find'; projectId: string }
   | null;
+
+/** Commits that actually changed one file, newest first. */
+function fileHistory(data: ProjectData, path: string) {
+  return data.commits
+    .map((commit) => {
+      const parent = commit.parent ? data.commits.find((item) => item.id === commit.parent) : null;
+      const before = parent?.tree[path] ?? '';
+      const after = commit.tree[path] ?? '';
+      if (before === after) return null;
+      const counts = countOps(diffLines(before, after));
+      return { commit, additions: counts.additions, deletions: counts.deletions };
+    })
+    .filter((entry): entry is { commit: Commit; additions: number; deletions: number } => entry !== null);
+}
 
 function haptic(kind: 'light' | 'success' | 'warning') {
   if (Platform.OS === 'web') return;
@@ -69,8 +89,10 @@ function Root() {
   const [locked, setLocked] = useState(false);
   const [ready, setReady] = useState(false);
   const [dataVersion, setDataVersion] = useState(0);
+  const [paletteOpen, setPaletteOpen] = useState(false);
   const backgroundedAt = useRef<number | null>(null);
 
+  const navPadding = useNavPadding();
   const theme = useMemo<'light' | 'dark'>(
     () => (settings.theme === 'system' ? (scheme === 'dark' ? 'dark' : 'light') : settings.theme),
     [settings.theme, scheme],
@@ -162,6 +184,45 @@ function Root() {
     [refreshProjects],
   );
 
+  const paletteActions: PaletteAction[] = useMemo(
+    () => [
+      {
+        id: 'tab-projects',
+        label: 'Go to Projects',
+        icon: 'albums-outline',
+        run: () => { setRoute(null); setTab('projects'); void refreshProjects(); },
+      },
+      {
+        id: 'tab-activity',
+        label: 'Go to Activity',
+        icon: 'pulse-outline',
+        run: () => { setRoute(null); setTab('activity'); void refreshProjects(); },
+      },
+      {
+        id: 'tab-publish',
+        label: 'Go to Publish',
+        icon: 'git-branch-outline',
+        run: () => { setRoute(null); setTab('publish'); },
+      },
+      {
+        id: 'tab-settings',
+        label: 'Go to Settings',
+        icon: 'settings-outline',
+        run: () => { setRoute(null); setTab('settings'); },
+      },
+      {
+        id: 'lock',
+        label: settings.lockEnabled ? 'Lock now' : 'Set up the app lock',
+        icon: 'lock-closed-outline',
+        run: () => {
+          if (settings.lockEnabled) setLocked(true);
+          else { setRoute(null); setTab('settings'); }
+        },
+      },
+    ],
+    [refreshProjects, settings.lockEnabled],
+  );
+
   if (!ready) {
     return (
       <ThemeProvider name={theme}>
@@ -196,6 +257,49 @@ function Root() {
               toast={toast}
             />
             {route === null ? <BottomNav value={tab} onChange={changeTab} /> : null}
+            {route === null ? (
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Command palette"
+                onPress={() => setPaletteOpen(true)}
+                style={{ position: 'absolute', right: layout.gutter, bottom: navPadding + 22 }}
+              >
+                <LinearGradient
+                  colors={
+                    theme === 'dark'
+                      ? ['rgba(122,162,255,0.95)', 'rgba(70,110,220,0.95)']
+                      : ['#3B78F0', '#2456C8']
+                  }
+                  start={{ x: 0.2, y: 0 }}
+                  end={{ x: 0.9, y: 1 }}
+                  style={{
+                    width: 50,
+                    height: 50,
+                    borderRadius: 25,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    borderWidth: 1,
+                    borderColor: 'rgba(255,255,255,0.22)',
+                  }}
+                >
+                  <Ionicons name="flash-outline" size={20} color="#FFFFFF" />
+                </LinearGradient>
+              </Pressable>
+            ) : null}
+            <CommandPalette
+              visible={paletteOpen}
+              onClose={() => setPaletteOpen(false)}
+              projects={projects.map((entry) => entry.project)}
+              actions={paletteActions}
+              onOpenFile={async (projectId, path) => {
+                await loadProject(projectId);
+                setRoute({ name: 'editor', projectId, path });
+              }}
+              onOpenCommit={async (projectId, commit) => {
+                await loadProject(projectId);
+                setRoute({ name: 'commit', projectId, commit });
+              }}
+            />
           </>
         )}
       </ToastProvider>
@@ -277,6 +381,15 @@ function Router({
           })
         }
         onOpenCommit={(commit) => setRoute({ name: 'commit', projectId: project.id, commit })}
+        onCompare={(title, diff) =>
+          setRoute({
+            name: 'diff',
+            projectId: project.id,
+            title: 'Compare commits',
+            subtitle: title,
+            changes: diff,
+          })
+        }
       />
     );
   }
@@ -297,6 +410,7 @@ function Router({
           await loadProject(project.id);
           setRoute({ name: 'editor', projectId: project.id, path: nextPath.trim() });
         }}
+        history={fileHistory(data, route.path)}
         onDelete={async () => {
           await db.deleteFile(project.id, route.path);
           await loadProject(project.id);
