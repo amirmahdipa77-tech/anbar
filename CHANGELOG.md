@@ -1,5 +1,25 @@
 # Changelog
 
+## 2.2.0 — liquid glass, a publish tab, and a much smaller APK
+
+**Size**
+- R8 minification, resource shrinking and PNG crunching are on for release builds.
+- The APK now ships only the 64-bit ARM libraries instead of every architecture.
+- `tools/trim_android.py` applies both at build time and fails loudly if a pattern moves.
+
+**Publish (new tab, replaces Search)**
+- Turns any project into a real git repository: a `git fast-import` stream with every commit,
+  message, author and timestamp, plus the three commands that import it and push it.
+- One tap copies the commands, another copies the stream. Nothing is uploaded by the app — the
+  push happens in your own terminal, which is the only way to keep the no-network promise.
+
+**Design**
+- The bar is now liquid glass: blur plus a soft specular sheen, rounder highlight, spring-driven
+  slide instead of a timed tween.
+- Cards carry a faint top-light sheen; the Publish header card tints with the accent.
+- Settings uses the real gear icon.
+- Search inside a project stays in the workspace header; the global search screen is gone.
+
 ## 2.1.0 — floating navigation and the precise editor
 
 **Navigation**
