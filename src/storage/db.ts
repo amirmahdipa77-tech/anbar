@@ -302,6 +302,58 @@ export function importBackup(raw: string): Promise<number> {
   });
 }
 
+/* ----------------------------------------------------------------- activity */
+
+export type ActivityEntry = { project: Project; commit: Commit };
+
+/** Every commit across every project, newest first. */
+export async function recentActivity(limit = 40): Promise<ActivityEntry[]> {
+  const list = await readIndex();
+  const entries: ActivityEntry[] = [];
+  for (const project of list) {
+    const data = await readProject(project.id);
+    data.commits.forEach((commit) => entries.push({ project, commit }));
+  }
+  entries.sort((a, b) => b.commit.createdAt - a.commit.createdAt);
+  return entries.slice(0, limit);
+}
+
+export type SearchHit = {
+  projectId: string;
+  projectName: string;
+  path: string;
+  line: number;
+  text: string;
+};
+
+/** Search the content of every file in every project. */
+export async function searchAll(query: string, limit = 120): Promise<SearchHit[]> {
+  const needle = query.trim().toLowerCase();
+  if (needle.length < 2) return [];
+  const list = await readIndex();
+  const hits: SearchHit[] = [];
+  for (const project of list) {
+    const data = await readProject(project.id);
+    const paths = Object.keys(data.files).sort();
+    for (const path of paths) {
+      const lines = data.files[path].split('\n');
+      for (let index = 0; index < lines.length; index += 1) {
+        if (lines[index].toLowerCase().includes(needle)) {
+          hits.push({
+            projectId: project.id,
+            projectName: project.name,
+            path,
+            line: index + 1,
+            text: lines[index].trim().slice(0, 120),
+          });
+          if (hits.length >= limit) return hits;
+        }
+      }
+    }
+  }
+  return hits;
+}
+
 /* --------------------------------------------------------------------- demo */
 
 export function seedDemo(author = 'You'): Promise<Project> {
