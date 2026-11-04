@@ -83,6 +83,58 @@ export function AppText({
   );
 }
 
+/* ------------------------------------------------------------------- touch */
+
+/**
+ * Every tappable surface goes through here.
+ *
+ * Android's default feedback is a rectangle that bleeds outside round shapes;
+ * this keeps the ripple circular and inside the element, and uses a plain
+ * opacity change on iOS and the web.
+ */
+export function Touch({
+  children,
+  onPress,
+  onLongPress,
+  disabled,
+  round = false,
+  rippleColor,
+  style,
+  accessibilityLabel,
+  accessibilityRole = 'button',
+}: {
+  children: React.ReactNode;
+  onPress?: () => void;
+  onLongPress?: () => void;
+  disabled?: boolean;
+  round?: boolean;
+  rippleColor?: string;
+  style?: StyleProp<ViewStyle>;
+  accessibilityLabel?: string;
+  accessibilityRole?: 'button' | 'tab' | 'link';
+}) {
+  const { palette } = useTheme();
+  const tint =
+    rippleColor ?? (palette.glassTint === 'dark' ? 'rgba(255,255,255,0.14)' : 'rgba(17,17,20,0.10)');
+  return (
+    <Pressable
+      accessibilityRole={accessibilityRole}
+      accessibilityLabel={accessibilityLabel}
+      disabled={disabled}
+      onPress={onPress}
+      onLongPress={onLongPress}
+      android_ripple={{ color: tint, borderless: round, radius: round ? 24 : undefined }}
+      style={({ pressed }) => [
+        style,
+        Platform.OS === 'android' ? null : { opacity: disabled ? 0.4 : pressed ? 0.6 : 1 },
+        disabled ? { opacity: 0.4 } : null,
+      ]}
+    >
+      {children}
+    </Pressable>
+  );
+}
+
 /* ----------------------------------------------------------------- buttons */
 
 export function Button({
@@ -625,12 +677,14 @@ export function Header({
   onBack,
   actions,
   large,
+  leading,
 }: {
   title: string;
   subtitle?: string;
   onBack?: () => void;
   actions?: React.ReactNode;
   large?: boolean;
+  leading?: React.ReactNode;
 }) {
   const { palette } = useTheme();
   const insets = useSafeAreaInsets();
@@ -638,27 +692,33 @@ export function Header({
     <View
       style={[
         styles.header,
-        {
-          paddingTop: insets.top + (Platform.OS === 'android' ? 8 : 6),
-          borderBottomColor: palette.line,
-          backgroundColor: palette.bg,
-        },
+        { paddingTop: insets.top + 4, backgroundColor: palette.bg, borderBottomColor: palette.line },
       ]}
     >
-      <View style={styles.headerTop}>
-        {onBack ? (
-          <IconButton name="chevron-back" onPress={onBack} accessibilityLabel="Back" size={22} />
+      <View style={styles.headerRow}>
+        {onBack || leading ? (
+          <View style={styles.headerSlot}>
+            {onBack ? (
+              <Touch round onPress={onBack} accessibilityLabel="Back" style={styles.slotTouch}>
+                <Ionicons name="chevron-back" size={22} color={palette.text} />
+              </Touch>
+            ) : (
+              leading ?? null
+            )}
+          </View>
         ) : null}
-        <View style={{ flex: 1 }}>
+
+        <View style={styles.headerTitleWrap}>
           <AppText variant={large ? 'display' : 'title'} numberOfLines={1}>
             {title}
           </AppText>
           {subtitle ? (
-            <AppText variant="caption" faint numberOfLines={1} style={{ marginTop: 2 }}>
+            <AppText variant="caption" faint numberOfLines={1} style={{ marginTop: 1 }}>
               {subtitle}
             </AppText>
           ) : null}
         </View>
+
         <View style={styles.headerActions}>{actions}</View>
       </View>
     </View>
@@ -790,14 +850,17 @@ const styles = StyleSheet.create({
   },
   header: {
     paddingHorizontal: space.md,
-    paddingBottom: space.sm,
+    paddingBottom: 8,
     borderBottomWidth: StyleSheet.hairlineWidth,
   },
-  headerTop: {
+  headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: space.xs,
-    minHeight: 40,
+    minHeight: 52,
+    gap: 2,
   },
-  headerActions: { flexDirection: 'row', alignItems: 'center', gap: space.xs },
+  headerSlot: { width: 40, alignItems: 'flex-start', justifyContent: 'center' },
+  slotTouch: { width: 36, height: 36, alignItems: 'center', justifyContent: 'center' },
+  headerTitleWrap: { flex: 1, minWidth: 0, paddingLeft: 2 },
+  headerActions: { flexDirection: 'row', alignItems: 'center', gap: 2 },
 });
