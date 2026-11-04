@@ -13,7 +13,8 @@ import {
 } from 'react-native';
 import { mono, monoRatio, space } from '../theme';
 import { AppText, Button, Chip, Field, Header, IconButton, Screen, Segmented, Sheet, useTheme, useToast } from '../ui/kit';
-import { plural } from '../core/format';
+import { plural, relativeTime, shortId } from '../core/format';
+import type { Commit } from '../types';
 
 type Mode = 'write' | 'rule';
 type RulerColumn = 0 | 72 | 80 | 100;
@@ -28,6 +29,7 @@ export function EditorScreen({
   onDelete,
   onRename,
   isChanged,
+  history,
 }: {
   path: string;
   initialContent: string;
@@ -36,6 +38,7 @@ export function EditorScreen({
   onDelete: () => void;
   onRename: (nextPath: string) => Promise<void>;
   isChanged: boolean;
+  history: Array<{ commit: Commit; additions: number; deletions: number }>;
 }) {
   const { palette } = useTheme();
   const toast = useToast();
@@ -54,6 +57,7 @@ export function EditorScreen({
   const [replaceValue, setReplaceValue] = useState('');
   const [findIndex, setFindIndex] = useState(0);
   const [renameOpen, setRenameOpen] = useState(false);
+  const [historyOpen, setHistoryOpen] = useState(false);
   const [renameValue, setRenameValue] = useState(path);
   const [error, setError] = useState<string | null>(null);
 
@@ -416,8 +420,46 @@ export function EditorScreen({
         <ToolRow icon="arrow-up-outline" title="Move line up" onPress={() => { moveLine(-1); setTools(false); }} />
         <ToolRow icon="arrow-down-outline" title="Move line down" onPress={() => { moveLine(1); setTools(false); }} />
         <ToolRow icon="locate-outline" title="Go to line" detail="jump" onPress={() => { setTools(false); jumpToLine(Math.max(1, caret.line)); }} />
+        <ToolRow
+          icon="time-outline"
+          title="History of this file"
+          detail={plural(history.length, 'commit')}
+          onPress={() => { setTools(false); setHistoryOpen(true); }}
+        />
         <ToolRow icon="pencil-outline" title="Rename or move file" detail={path} onPress={() => { setTools(false); setRenameValue(path); setRenameOpen(true); }} />
         <ToolRow icon="trash-outline" title="Delete file" danger onPress={() => { setTools(false); onDelete(); }} />
+      </Sheet>
+
+      <Sheet
+        visible={historyOpen}
+        onClose={() => setHistoryOpen(false)}
+        title="History of this file"
+      >
+        {history.length === 0 ? (
+          <AppText variant="body" muted>
+            This file has not changed in any commit yet.
+          </AppText>
+        ) : (
+          history.map((entry) => (
+            <View
+              key={entry.commit.id}
+              style={{ paddingVertical: 11, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: palette.lineSoft }}
+            >
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                <AppText variant="mono" faint>
+                  {shortId(entry.commit.id)}
+                </AppText>
+                <AppText variant="body" numberOfLines={1} style={{ flex: 1 }}>
+                  {entry.commit.message}
+                </AppText>
+              </View>
+              <AppText variant="caption" faint style={{ marginTop: 3 }}>
+                {entry.commit.author} · {relativeTime(entry.commit.createdAt)} · +{entry.additions} −
+                {entry.deletions}
+              </AppText>
+            </View>
+          ))
+        )}
       </Sheet>
 
       <Sheet
