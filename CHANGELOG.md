@@ -1,5 +1,27 @@
 # Changelog
 
+## 2.3.0 — the round bar, the palette, and precise alignment
+
+**Shape**
+- The bottom bar is a full pill now (999 radius, highlight included) instead of a rounded rectangle.
+- Every tappable surface goes through one `Touch` primitive: a circular Android ripple that stays
+  inside the element, opacity on iOS and web. No more square flash bleeding past round shapes.
+
+**Alignment**
+- A shared layout grid (`layout.gutter`, `layout.rowHeight`, `layout.headerRow`, `layout.slot`) so
+  headers, rows and cards line up edge to edge across screens.
+- The header is rebuilt on fixed 40 px leading/trailing slots and one 52 px row, with the title
+  starting on the same 16 px gutter whether or not there is a back button.
+
+**Command palette (new)**
+- One field over actions, every file in every project, and every commit. Opens from the floating
+  button above the bar.
+
+**History tools (new)**
+- Compare any two commits: pick the older, pick the newer, read the tree diff.
+- Per-file history inside the editor: every commit that actually touched the file, with its own
+  added/removed counts.
+
 ## 2.2.2 — the size fix that actually lands
 
 - `reactNativeArchitectures` now pins the build to `arm64-v8a`. That single line is where the
