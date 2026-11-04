@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "noEmit": false,
+    "module": "commonjs",
+    "moduleResolution": "node10",
+    "ignoreDeprecations": "6.0",
+    "target": "ES2020",
+    "jsx": "react-jsx",
+    "lib": [
+      "ES2020",
+      "DOM"
+    ],
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "resolveJsonModule": true,
+    "outDir": ".test-build",
+    "rootDir": "."
+  },
+  "include": [
+    "src/core/**/*.ts",
+    "src/storage/**/*.ts",
+    "src/types.ts",
+    "tests/**/*.ts"
+  ]
+}
