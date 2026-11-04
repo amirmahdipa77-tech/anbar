@@ -1,19 +1,20 @@
 import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
+import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import React, { useEffect, useRef, useState } from 'react';
 import { Animated, Easing, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { motion, navGap, navHeight, palette as paletteFor, space } from '../theme';
+import { navGap, navHeight, palette as paletteFor, space } from '../theme';
 import { useTheme } from './kit';
 
-export type TabKey = 'projects' | 'activity' | 'search' | 'settings';
+export type TabKey = 'projects' | 'activity' | 'publish' | 'settings';
 
 const ITEMS: Array<{ key: TabKey; label: string; icon: keyof typeof Ionicons.glyphMap; active: keyof typeof Ionicons.glyphMap }> = [
   { key: 'projects', label: 'Projects', icon: 'albums-outline', active: 'albums' },
   { key: 'activity', label: 'Activity', icon: 'pulse-outline', active: 'pulse' },
-  { key: 'search', label: 'Search', icon: 'search-outline', active: 'search' },
-  { key: 'settings', label: 'Settings', icon: 'options-outline', active: 'options' },
+  { key: 'publish', label: 'Publish', icon: 'git-branch-outline', active: 'git-branch' },
+  { key: 'settings', label: 'Settings', icon: 'settings-outline', active: 'settings' },
 ];
 
 /**
@@ -40,10 +41,11 @@ export function BottomNav({
   const index = ITEMS.findIndex((item) => item.key === value);
 
   useEffect(() => {
-    Animated.timing(slide, {
+    Animated.spring(slide, {
       toValue: index,
-      duration: motion.base,
-      easing: Easing.out(Easing.cubic),
+      stiffness: 240,
+      damping: 26,
+      mass: 0.9,
       useNativeDriver: true,
     }).start();
   }, [index, slide]);
@@ -61,6 +63,17 @@ export function BottomNav({
           tint={palette.glassTint}
           style={[styles.bar, { borderColor: palette.glassLine, backgroundColor: palette.glass }]}
         >
+          <LinearGradient
+            pointerEvents="none"
+            colors={
+              palette.glassTint === 'dark'
+                ? ['rgba(255,255,255,0.10)', 'rgba(255,255,255,0.02)', 'rgba(255,255,255,0)']
+                : ['rgba(255,255,255,0.75)', 'rgba(255,255,255,0.25)', 'rgba(255,255,255,0)']
+            }
+            start={{ x: 0.1, y: 0 }}
+            end={{ x: 0.4, y: 1 }}
+            style={StyleSheet.absoluteFill}
+          />
           <View
             style={styles.track}
             onLayout={(event) => setWidth(event.nativeEvent.layout.width)}
@@ -177,9 +190,11 @@ const styles = StyleSheet.create({
   pill: {
     position: 'absolute',
     left: 5,
-    top: 6,
-    bottom: 6,
-    borderRadius: 16,
+    top: 5,
+    bottom: 5,
+    borderRadius: 18,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: 'rgba(255,255,255,0.10)',
   },
   cell: {
     flex: 1,
