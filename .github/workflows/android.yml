@@ -37,8 +37,8 @@ jobs:
       - name: Generate the native Android project
         run: npx expo prebuild --platform android --no-install
 
-      - name: Trim the build (R8, resource shrinking, arm64 only)
-        run: python3 tools/trim_android.py android/app/build.gradle android/gradle.properties
+      - name: Trim the build (arm64 only, R8 full mode)
+        run: python3 tools/trim_android.py android/gradle.properties android/app/build.gradle
 
       - name: Build the release APK
         run: cd android && ./gradlew assembleRelease --no-daemon
