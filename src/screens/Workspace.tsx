@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import React, { useMemo, useState } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
 import { plural, relativeTime, shortId } from '../core/format';
+import { diffTrees } from '../core/diff';
 import { space } from '../theme';
 import type { Change, Commit, Project, ProjectData } from '../types';
 import {
@@ -36,6 +37,7 @@ export function WorkspaceScreen({
   onOpenCommit,
   onFind,
   onSettings,
+  onCompare,
 }: {
   project: Project;
   data: ProjectData;
@@ -49,10 +51,13 @@ export function WorkspaceScreen({
   onOpenCommit: (commit: Commit) => void;
   onFind: () => void;
   onSettings: () => void;
+  onCompare: (title: string, changes: Change[]) => void;
 }) {
   const { palette } = useTheme();
   const [tab, setTab] = useState<Tab>('files');
   const [creating, setCreating] = useState(false);
+  const [compareOpen, setCompareOpen] = useState(false);
+  const [baseId, setBaseId] = useState<string | null>(null);
   const [committing, setCommitting] = useState(false);
   const [path, setPath] = useState('');
   const [message, setMessage] = useState('');
@@ -254,7 +259,33 @@ export function WorkspaceScreen({
                 }
               />
             ) : (
-              data.commits.map((commit, index) => (
+              <>
+              <Pressable
+                onPress={() => {
+                  setBaseId(null);
+                  setCompareOpen(true);
+                }}
+                style={({ pressed }) => ({
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  gap: space.sm,
+                  paddingVertical: 10,
+                  paddingHorizontal: 12,
+                  marginBottom: space.sm,
+                  borderRadius: 10,
+                  borderWidth: 1,
+                  borderColor: palette.line,
+                  backgroundColor: palette.surfaceAlt,
+                  opacity: pressed ? 0.6 : 1,
+                })}
+              >
+                <Ionicons name="git-compare-outline" size={16} color={palette.accent} />
+                <AppText variant="label" style={{ color: palette.accent, flex: 1 }}>
+                  Compare two commits
+                </AppText>
+                <Ionicons name="chevron-forward" size={14} color={palette.faint} />
+              </Pressable>
+              {data.commits.map((commit, index) => (
                 <Card key={commit.id} style={{ marginBottom: space.sm, padding: 0, overflow: 'hidden' }}>
                   <Pressable
                     onPress={() => onOpenCommit(commit)}
@@ -281,7 +312,8 @@ export function WorkspaceScreen({
                     </View>
                   </Pressable>
                 </Card>
-              ))
+              ))}
+              </>
             )}
           </View>
         </ScrollView>
@@ -333,6 +365,39 @@ export function WorkspaceScreen({
           error={error ?? undefined}
           hint="A slash creates a folder."
         />
+      </Sheet>
+
+      <Sheet
+        visible={compareOpen}
+        onClose={() => setCompareOpen(false)}
+        title={baseId ? 'Pick the newer commit' : 'Pick the older commit'}
+      >
+        <AppText variant="caption" faint style={{ marginBottom: space.sm }}>
+          {baseId ? 'The diff will run from the first pick to this one.' : 'This is the “before” side.'}
+        </AppText>
+        {data.commits.map((commit) => (
+          <Row
+            key={commit.id}
+            title={commit.message}
+            subtitle={`${shortId(commit.id)} · ${relativeTime(commit.createdAt)}`}
+            selected={commit.id === baseId}
+            onPress={() => {
+              if (!baseId) {
+                setBaseId(commit.id);
+                return;
+              }
+              const from = data.commits.find((item) => item.id === baseId);
+              const to = commit;
+              setCompareOpen(false);
+              if (!from || from.id === to.id) return;
+              onCompare(
+                `${shortId(from.id)} → ${shortId(to.id)}`,
+                diffTrees(from.tree, to.tree),
+              );
+            }}
+            right={<Ionicons name="chevron-forward" size={14} color={palette.faint} />}
+          />
+        ))}
       </Sheet>
 
       <Sheet
