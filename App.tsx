@@ -10,13 +10,13 @@ import { DiffScreen } from './src/screens/Diff';
 import { EditorScreen } from './src/screens/Editor';
 import { FindScreen } from './src/screens/Find';
 import { LockScreen } from './src/screens/Lock';
-import { SearchScreen } from './src/screens/Search';
+import { PublishScreen } from './src/screens/Publish';
 import { SettingsScreen } from './src/screens/Settings';
 import { ViewerScreen } from './src/screens/Viewer';
 import { WorkspaceScreen } from './src/screens/Workspace';
 import { DEFAULT_SETTINGS, loadSettings, saveSettings } from './src/security/pin';
 import * as db from './src/storage/db';
-import type { ActivityEntry, SearchHit } from './src/storage/db';
+import type { ActivityEntry } from './src/storage/db';
 import type { Change, Commit, Project, ProjectData, Settings } from './src/types';
 import { BottomNav, useNavPadding, type TabKey } from './src/ui/BottomNav';
 import { ThemeProvider, ToastProvider } from './src/ui/kit';
@@ -383,16 +383,8 @@ function Router({
     );
   }
 
-  if (tab === 'search') {
-    return (
-      <SearchScreen
-        version={dataVersion}
-        onOpenHit={async (hit: SearchHit) => {
-          await loadProject(hit.projectId);
-          setRoute({ name: 'editor', projectId: hit.projectId, path: hit.path });
-        }}
-      />
-    );
+  if (tab === 'publish') {
+    return <PublishScreen projects={projects} />;
   }
 
   return (
