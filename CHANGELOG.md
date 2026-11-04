@@ -1,5 +1,33 @@
 # Changelog
 
+## 2.1.0 — floating navigation and the precise editor
+
+**Navigation**
+- A floating glass bar (blurred, translucent, safe-area aware) replaces the header-only navigation.
+- The active tab is a single highlight view that slides between positions — one animation per
+  switch, no layout work.
+- Four places: Projects, Activity, Search, Settings. The bar steps aside inside a project so files,
+  diffs and commits get the full screen.
+
+**Editor**
+- Line-number gutter that scrolls in sync with the text, with the current line highlighted.
+- Two modes: **Write** (fast input, autosave, undo/redo) and **Ruled** (one row per line, so the
+  gutter, the column ruler and horizontal scroll can never drift; tap a line to edit it).
+- Column ruler at 72 / 80 / 100 characters, drawn as a hairline in both modes.
+- Find in file with match counter, next/previous, replace one and replace all.
+- File tools sheet: ruler, font size, duplicate line, move line up/down, go to line, rename or move
+  the file, delete.
+- Live `line X, col Y` in the header, plus line, character and ruler readout in the footer.
+
+**New screens**
+- Activity: every commit across every project, grouped by day, one tap from the diff.
+- Search: inside every file of every project, grouped by file.
+
+**Fixes**
+- The dashboard no longer stacks a floating action under the new bar; “New project” moved to the
+  header.
+- Removed the noisy commit-count badge from the bar.
+
 ## 2.0.0 — the native app
 
 Anbar is now a React Native application instead of a web page. The rewrite was driven by three
