@@ -136,7 +136,7 @@ export function WorkspaceScreen({
       </View>
 
       {tab === 'files' ? (
-        <ScrollView contentContainerStyle={{ paddingBottom: 140 }}>
+        <ScrollView contentContainerStyle={{ paddingBottom: 120 }}>
           <View style={{ paddingHorizontal: space.lg, paddingTop: space.md }}>
             {files.length === 0 ? (
               <EmptyState
@@ -206,7 +206,7 @@ export function WorkspaceScreen({
       ) : null}
 
       {tab === 'changes' ? (
-        <ScrollView contentContainerStyle={{ paddingBottom: 140 }}>
+        <ScrollView contentContainerStyle={{ paddingBottom: 120 }}>
           <View style={{ paddingHorizontal: space.lg, paddingTop: space.md }}>
             {changes.length === 0 ? (
               <EmptyState
@@ -236,7 +236,7 @@ export function WorkspaceScreen({
       ) : null}
 
       {tab === 'history' ? (
-        <ScrollView contentContainerStyle={{ paddingBottom: 140 }}>
+        <ScrollView contentContainerStyle={{ paddingBottom: 120 }}>
           <View style={{ paddingHorizontal: space.lg, paddingTop: space.md }}>
             {data.commits.length === 0 ? (
               <EmptyState
@@ -288,7 +288,15 @@ export function WorkspaceScreen({
       ) : null}
 
       {tab === 'files' && files.length > 0 ? (
-        <View style={{ position: 'absolute', left: space.lg, right: space.lg, bottom: space.xl, gap: space.sm }}>
+        <View
+          style={{
+            position: 'absolute',
+            left: space.lg,
+            right: space.lg,
+            bottom: space.xl,
+            gap: space.sm,
+          }}
+        >
           {changes.length > 0 ? (
             <Button
               label={`Commit ${plural(changes.length, 'file')}`}
