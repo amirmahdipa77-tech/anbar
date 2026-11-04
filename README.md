@@ -115,7 +115,9 @@ one list.
   > Sound effects by Amirmahdi Pop — Amirmahdi Sound Library (CC BY 4.0)
   > https://github.com/amirmahdipa77-tech/amirmahdi-sound-library
 
-- **Code** (`tools/generate_sounds.py`): MIT — see `LICENSE-CODE`.
+- **Code** (`tools/generate_sounds.py`, `tools/build_docs.py`): MIT — see `LICENSE-CODE`.
+
+The copyright line and the exact scope of each license are in [`NOTICE`](NOTICE).
 
 No warranty of any kind; the library is provided as-is.
 
