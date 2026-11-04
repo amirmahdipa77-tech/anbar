@@ -1,0 +1,48 @@
+Amirmahdi Sound Library — audio license
+=======================================
+
+Copyright (c) 2026 Amirmahdi Pop <amirmahdipop343@gmail.com>
+
+Every file under sounds/ in this repository is licensed under the
+
+    Creative Commons Attribution 4.0 International License (CC BY 4.0)
+
+You are free to:
+
+  * Share  — copy and redistribute the material in any medium or format,
+             for any purpose, including commercially.
+  * Adapt  — remix, transform and build upon the material, for any purpose,
+             including commercially.
+
+Under the following terms:
+
+  * Attribution — You must give appropriate credit to Amirmahdi Pop, provide a
+    link to this license, and indicate if changes were made. You may do so in
+    any reasonable manner, but not in any way that suggests the licensor
+    endorses you or your use.
+  * No additional restrictions — You may not apply legal terms or
+    technological measures that legally restrict others from doing anything
+    the license permits.
+
+There is no warranty. The material is provided "as is", without warranties or
+conditions of any kind, and the licensor is not liable for any damages arising
+from its use.
+
+A ready-made credit line you can paste into your project:
+
+    Sound effects by Amirmahdi Pop — Amirmahdi Sound Library (CC BY 4.0)
+    https://github.com/amirmahdipa77-tech/amirmahdi-sound-library
+
+Canonical legal code
+--------------------
+This file is a summary notice, not the license text itself. The binding legal
+code of CC BY 4.0 is published by Creative Commons and is available at:
+
+    https://creativecommons.org/licenses/by/4.0/legalcode
+
+A plain-text version and official translations are linked from that page.
+In case of any conflict between this summary and the canonical legal code,
+the canonical legal code governs.
+
+Note on the code in this repository: the generator script in tools/ is licensed
+separately under the MIT License — see LICENSE-CODE.
