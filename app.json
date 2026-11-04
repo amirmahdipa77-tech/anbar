@@ -1,0 +1,46 @@
+{
+  "expo": {
+    "name": "Anbar",
+    "slug": "anbar",
+    "version": "2.0.0",
+    "orientation": "portrait",
+    "scheme": "anbar",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0F1012"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "android": {
+      "package": "tech.amirmahdi.anbar",
+      "versionCode": 200,
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": true,
+      "blockedPermissions": [
+        "android.permission.INTERNET",
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.ACCESS_WIFI_STATE"
+      ],
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundColor": "#0F1012",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      }
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "single",
+      "name": "Anbar",
+      "shortName": "Anbar",
+      "themeColor": "#0F1012",
+      "backgroundColor": "#0F1012"
+    },
+    "plugins": ["expo-splash-screen"],
+    "extra": {
+      "privacy": "No network permission, no accounts, no analytics."
+    }
+  }
+}
