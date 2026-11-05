@@ -30,6 +30,7 @@ export function EditorScreen({
   onRename,
   isChanged,
   history,
+  timeline,
 }: {
   path: string;
   initialContent: string;
@@ -39,6 +40,7 @@ export function EditorScreen({
   onRename: (nextPath: string) => Promise<void>;
   isChanged: boolean;
   history: Array<{ commit: Commit; additions: number; deletions: number }>;
+  timeline: Array<{ id: string; message: string; createdAt: number; content: string }>;
 }) {
   const { palette } = useTheme();
   const toast = useToast();
@@ -58,6 +60,8 @@ export function EditorScreen({
   const [findIndex, setFindIndex] = useState(0);
   const [renameOpen, setRenameOpen] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
+  const [timeOpen, setTimeOpen] = useState(false);
+  const [timeIndex, setTimeIndex] = useState(0);
   const [renameValue, setRenameValue] = useState(path);
   const [error, setError] = useState<string | null>(null);
 
@@ -421,6 +425,12 @@ export function EditorScreen({
         <ToolRow icon="arrow-down-outline" title="Move line down" onPress={() => { moveLine(1); setTools(false); }} />
         <ToolRow icon="locate-outline" title="Go to line" detail="jump" onPress={() => { setTools(false); jumpToLine(Math.max(1, caret.line)); }} />
         <ToolRow
+          icon="hourglass-outline"
+          title="Time machine"
+          detail={plural(timeline.length, 'version')}
+          onPress={() => { setTools(false); setTimeIndex(0); setTimeOpen(true); }}
+        />
+        <ToolRow
           icon="time-outline"
           title="History of this file"
           detail={plural(history.length, 'commit')}
@@ -428,6 +438,77 @@ export function EditorScreen({
         />
         <ToolRow icon="pencil-outline" title="Rename or move file" detail={path} onPress={() => { setTools(false); setRenameValue(path); setRenameOpen(true); }} />
         <ToolRow icon="trash-outline" title="Delete file" danger onPress={() => { setTools(false); onDelete(); }} />
+      </Sheet>
+
+      <Sheet visible={timeOpen} onClose={() => setTimeOpen(false)} title="Time machine">
+        {timeline.length === 0 ? (
+          <AppText variant="body" muted>
+            No committed versions of this file yet.
+          </AppText>
+        ) : (
+          <View>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm }}>
+              <IconButton
+                name="chevron-back"
+                onPress={() => setTimeIndex((index) => Math.min(timeline.length - 1, index + 1))}
+                accessibilityLabel="Older"
+                disabled={timeIndex >= timeline.length - 1}
+              />
+              <View style={{ flex: 1 }}>
+                <AppText variant="caption" faint>
+                  {relativeTime(timeline[timeIndex].createdAt)} · {shortId(timeline[timeIndex].id)}
+                </AppText>
+                <AppText variant="label" numberOfLines={1}>
+                  {timeline[timeIndex].message}
+                </AppText>
+              </View>
+              <IconButton
+                name="chevron-forward"
+                onPress={() => setTimeIndex((index) => Math.max(0, index - 1))}
+                accessibilityLabel="Newer"
+                disabled={timeIndex === 0}
+              />
+            </View>
+
+            <View style={{ flexDirection: 'row', gap: 3, marginVertical: space.md }}>
+              {timeline.map((entry, index) => (
+                <Pressable
+                  key={entry.id}
+                  onPress={() => setTimeIndex(index)}
+                  accessibilityLabel={`Version ${timeline.length - index}`}
+                  style={{
+                    flex: 1,
+                    height: 18,
+                    justifyContent: 'center',
+                  }}
+                >
+                  <View
+                    style={{
+                      height: index === timeIndex ? 4 : 2,
+                      borderRadius: 2,
+                      backgroundColor: index === timeIndex ? palette.accent : palette.line,
+                    }}
+                  />
+                </Pressable>
+              ))}
+            </View>
+
+            <ScrollView
+              style={{
+                maxHeight: 300,
+                borderRadius: 10,
+                borderWidth: 1,
+                borderColor: palette.line,
+                backgroundColor: palette.surfaceAlt,
+              }}
+              contentContainerStyle={{ padding: space.md }}
+            >
+              <AppText variant="mono" selectable style={{ fontSize: 12, lineHeight: 18 }}>
+                {timeline[timeIndex].content || '(empty at this point)'}
+              </AppText>
+            </ScrollView>
+          </View>
+        )}
       </Sheet>
 
       <Sheet
