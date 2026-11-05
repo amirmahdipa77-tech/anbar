@@ -59,9 +59,9 @@ export function BottomNav({
     >
       <View style={styles.shadow}>
         <BlurView
-          intensity={Platform.OS === 'android' ? 70 : 46}
+          intensity={Platform.OS === 'android' ? 100 : 80}
           tint={palette.glassTint}
-          style={[styles.bar, { borderColor: palette.glassLine, backgroundColor: palette.glass }]}
+          style={[styles.bar, { borderColor: palette.glassLine, backgroundColor: palette.acrylic }]}
         >
           <LinearGradient
             pointerEvents="none"
