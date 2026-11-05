@@ -1,5 +1,31 @@
 # Changelog
 
+## 2.4.0 — acrylic menus, more air, exclusive tools
+
+**Material**
+- The bottom bar is acrylic, not a window: higher blur and a near-opaque tint, so what is behind it
+  no longer shows through the icons.
+- Bottom sheets are acrylic too — the only place the material is used, which keeps the content
+  screens flat and quiet.
+
+**Spacing and menus**
+- Rows have a 52 px minimum height, buttons 46 px, and every gap grew one step. Nothing touches.
+- The project header no longer carries three icons: one overflow menu holds Find in files, Compare
+  two commits and Settings.
+- Settings is a stack of collapsible sections instead of one long scroll.
+
+**Exclusive tools**
+- **Time machine** — scrub every committed version of the open file with a track and prev/next
+  steps, and read it without leaving the editor.
+- **Per-file history** — only the commits that actually changed this file, with their own +/− counts.
+- **Compare two commits** — pick a before and an after, read the tree diff.
+- **Suggested commit messages** — derived offline from what actually changed (`Add app.ts`,
+  `Update 3 files (app.ts, theme.ts, …)`).
+
+**Size**
+- `expo-system-ui` removed; Kotlin metadata, `.version`, `.md`, `DebugProbesKt.bin` and JS source
+  maps are excluded from the APK at build time.
+
 ## 2.3.0 — the round bar, the palette, and precise alignment
 
 **Shape**
