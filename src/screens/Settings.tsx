@@ -89,9 +89,7 @@ export function SettingsScreen({
       <Header title="Settings" onBack={onBack} />
 
       <ScrollView contentContainerStyle={{ padding: space.lg, paddingBottom: 60 }}>
-        <AppText variant="caption" faint style={labelStyle}>
-          Appearance
-        </AppText>
+        <Section title="Appearance" defaultOpen>
         <Segmented
           value={settings.theme}
           onChange={(theme) => void onChange({ ...settings, theme })}
@@ -101,10 +99,9 @@ export function SettingsScreen({
             { value: 'dark', label: 'Dark' },
           ]}
         />
+        </Section>
 
-        <AppText variant="caption" faint style={labelStyle}>
-          Identity
-        </AppText>
+        <Section title="Identity" defaultOpen>
         <Card style={{ padding: 0 }}>
           <View style={{ padding: space.lg }}>
             <Field
@@ -119,9 +116,9 @@ export function SettingsScreen({
           </View>
         </Card>
 
-        <AppText variant="caption" faint style={labelStyle}>
-          Security
-        </AppText>
+        </Section>
+
+        <Section title="Security">
         <Card style={{ padding: 0 }}>
           <Row
             title="App lock"
@@ -173,9 +170,9 @@ export function SettingsScreen({
           ) : null}
         </Card>
 
-        <AppText variant="caption" faint style={labelStyle}>
-          Data
-        </AppText>
+        </Section>
+
+        <Section title="Data">
         <Card style={{ padding: 0 }}>
           <Row
             title="Export backup"
@@ -207,9 +204,9 @@ export function SettingsScreen({
           />
         </Card>
 
-        <AppText variant="caption" faint style={labelStyle}>
-          About
-        </AppText>
+        </Section>
+
+        <Section title="About">
         <Card>
           <AppText variant="body" style={{ lineHeight: 22 }}>
             Anbar 2.0 · a local workspace for code. Files, commits and history live in this device’s
@@ -220,6 +217,7 @@ export function SettingsScreen({
             MIT licensed · made by Amirmahdi Pop
           </AppText>
         </Card>
+        </Section>
       </ScrollView>
 
       <Sheet
@@ -315,6 +313,49 @@ export function SettingsScreen({
         </AppText>
       </Sheet>
     </Screen>
+  );
+}
+
+function Section({
+  title,
+  children,
+  defaultOpen = false,
+}: {
+  title: string;
+  children: React.ReactNode;
+  defaultOpen?: boolean;
+}) {
+  const { palette } = useTheme();
+  const [open, setOpen] = useState(defaultOpen);
+  return (
+    <View style={{ marginTop: space.xl }}>
+      <Pressable
+        onPress={() => setOpen((value) => !value)}
+        accessibilityRole="button"
+        accessibilityLabel={`${title} section`}
+        style={({ pressed }) => ({
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: space.sm,
+          paddingVertical: 10,
+          opacity: pressed ? 0.6 : 1,
+        })}
+      >
+        <AppText
+          variant="caption"
+          faint
+          style={{ textTransform: 'uppercase', letterSpacing: 0.7, flex: 1 }}
+        >
+          {title}
+        </AppText>
+        <Ionicons
+          name={open ? 'chevron-up' : 'chevron-down'}
+          size={14}
+          color={palette.faint}
+        />
+      </Pressable>
+      {open ? <View>{children}</View> : null}
+    </View>
   );
 }
 
