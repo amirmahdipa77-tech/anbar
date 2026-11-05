@@ -411,6 +411,12 @@ function Router({
           setRoute({ name: 'editor', projectId: project.id, path: nextPath.trim() });
         }}
         history={fileHistory(data, route.path)}
+        timeline={data.commits.map((commit) => ({
+          id: commit.id,
+          message: commit.message,
+          createdAt: commit.createdAt,
+          content: commit.tree[route.path] ?? '',
+        }))}
         onDelete={async () => {
           await db.deleteFile(project.id, route.path);
           await loadProject(project.id);
