@@ -56,6 +56,7 @@ export function WorkspaceScreen({
   const { palette } = useTheme();
   const [tab, setTab] = useState<Tab>('files');
   const [creating, setCreating] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [compareOpen, setCompareOpen] = useState(false);
   const [baseId, setBaseId] = useState<string | null>(null);
   const [committing, setCommitting] = useState(false);
@@ -95,6 +96,23 @@ export function WorkspaceScreen({
     }
   }
 
+  function suggestion(): string {
+    if (changes.length === 0) return '';
+    if (changes.length === 1) {
+      const only = changes[0];
+      const name = only.path.split('/').pop() ?? only.path;
+      if (only.status === 'added') return `Add ${name}`;
+      if (only.status === 'deleted') return `Remove ${name}`;
+      return `Update ${name}`;
+    }
+    const added = changes.filter((change) => change.status === 'added').length;
+    const removed = changes.filter((change) => change.status === 'deleted').length;
+    if (added === changes.length) return `Add ${plural(added, 'file')}`;
+    if (removed === changes.length) return `Remove ${plural(removed, 'file')}`;
+    const names = changes.slice(0, 3).map((change) => change.path.split('/').pop()).join(', ');
+    return `Update ${plural(changes.length, 'file')} (${names}${changes.length > 3 ? ', …' : ''})`;
+  }
+
   async function submitCommit() {
     setBusy(true);
     setError(null);
@@ -121,10 +139,7 @@ export function WorkspaceScreen({
         }`}
         onBack={onBack}
         actions={
-          <>
-            <IconButton name="search" onPress={onFind} accessibilityLabel="Find in files" />
-            <IconButton name="settings-outline" onPress={onSettings} accessibilityLabel="Settings" />
-          </>
+          <IconButton name="ellipsis-horizontal" onPress={() => setMenuOpen(true)} accessibilityLabel="Project menu" />
         }
       />
 
@@ -334,7 +349,10 @@ export function WorkspaceScreen({
               label={`Commit ${plural(changes.length, 'file')}`}
               variant="primary"
               icon="checkmark"
-              onPress={() => setCommitting(true)}
+              onPress={() => {
+                setMessage(suggestion());
+                setCommitting(true);
+              }}
             />
           ) : (
             <Button label="New file" variant="primary" icon="add" onPress={() => setCreating(true)} />
@@ -364,6 +382,36 @@ export function WorkspaceScreen({
           autoCorrect={false}
           error={error ?? undefined}
           hint="A slash creates a folder."
+        />
+      </Sheet>
+
+      <Sheet visible={menuOpen} onClose={() => setMenuOpen(false)} title={project.name}>
+        <Row
+          title="Find in files"
+          subtitle="Search the content of every file here"
+          left={<Ionicons name="search" size={18} color={palette.muted} />}
+          onPress={() => {
+            setMenuOpen(false);
+            onFind();
+          }}
+        />
+        <Row
+          title="Compare two commits"
+          subtitle="Pick a before and an after"
+          left={<Ionicons name="git-compare-outline" size={18} color={palette.muted} />}
+          onPress={() => {
+            setMenuOpen(false);
+            setBaseId(null);
+            setCompareOpen(true);
+          }}
+        />
+        <Row
+          title="Settings"
+          left={<Ionicons name="settings-outline" size={18} color={palette.muted} />}
+          onPress={() => {
+            setMenuOpen(false);
+            onSettings();
+          }}
         />
       </Sheet>
 
