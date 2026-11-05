@@ -38,6 +38,8 @@ def main() -> int:
         ("android.enableShrinkResourcesInReleaseBuilds", "true"),
         ("android.enablePngCrunchInReleaseBuilds", "true"),
         ("android.enableR8.fullMode", "true"),
+        # compress the native libraries inside the APK instead of page-aligning them
+        ("expo.useLegacyPackaging", "true"),
     ]:
         props, how = set_property(props, key, value)
         print(f"  {key}: {how} -> {value}")
