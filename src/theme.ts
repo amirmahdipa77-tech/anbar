@@ -28,6 +28,7 @@ export type Palette = {
   glass: string;
   glassLine: string;
   glassTint: 'light' | 'dark';
+  acrylic: string;
 };
 
 export const light: Palette = {
@@ -50,6 +51,7 @@ export const light: Palette = {
   glass: 'rgba(255,255,255,0.72)',
   glassLine: 'rgba(17,17,20,0.08)',
   glassTint: 'light',
+  acrylic: 'rgba(250,250,252,0.88)',
 };
 
 export const dark: Palette = {
@@ -72,6 +74,7 @@ export const dark: Palette = {
   glass: 'rgba(22,24,27,0.66)',
   glassLine: 'rgba(255,255,255,0.09)',
   glassTint: 'dark',
+  acrylic: 'rgba(26,29,34,0.90)',
 };
 
 export function palette(name: ThemeName): Palette {
