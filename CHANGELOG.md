@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.4.1 — compressed native libraries
+
+- `expo.useLegacyPackaging=true`: the 17 `.so` files are stored compressed inside the APK instead of
+  page-aligned and uncompressed. That is where the remaining bulk was.
+- Same code as 2.4.0 otherwise.
+
 ## 2.4.0 — acrylic menus, more air, exclusive tools
 
 **Material**
