@@ -45,6 +45,16 @@ def main() -> int:
     with open(properties, "w", encoding="utf-8") as handle:
         handle.write(props)
 
+    # strip what no one reads at runtime: Kotlin metadata, debug probes, licences
+    if gradle:
+        with open(gradle, encoding="utf-8") as handle:
+            text = handle.read()
+        if "kotlin-tooling-metadata.json" not in text and "packagingOptions {" in text:
+            text = text.replace("    packagingOptions {", "    packagingOptions {\n        resources {\n            excludes += [\"META-INF/*.kotlin_module\", \"META-INF/*.version\", \"META-INF/*.md\",\n                         \"DebugProbesKt.bin\", \"kotlin-tooling-metadata.json\", \"**/*.js.map\"]\n        }", 1)
+            print("  build.gradle: resource excludes added")
+        with open(gradle, "w", encoding="utf-8") as handle:
+            handle.write(text)
+
     if gradle:
         with open(gradle, encoding="utf-8") as handle:
             text = handle.read()
