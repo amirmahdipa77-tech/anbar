@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, {
   createContext,
@@ -476,8 +477,8 @@ export function Sheet({
           style={[
             styles.sheet,
             {
-              backgroundColor: palette.surface,
-              borderColor: palette.line,
+              backgroundColor: palette.acrylic,
+              borderColor: palette.glassLine,
               paddingBottom: insets.bottom + space.lg,
               transform: [
                 {
@@ -488,6 +489,12 @@ export function Sheet({
             },
           ]}
         >
+          <BlurView
+            pointerEvents="none"
+            intensity={Platform.OS === 'android' ? 100 : 80}
+            tint={palette.glassTint}
+            style={StyleSheet.absoluteFill}
+          />
           <View style={[styles.sheetHandle, { backgroundColor: palette.line }]} />
           <View style={styles.sheetHeader}>
             <AppText variant="heading">{title}</AppText>
@@ -730,9 +737,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 7,
-    paddingHorizontal: space.lg,
-    paddingVertical: 11,
+    gap: 8,
+    minHeight: 46,
+    paddingHorizontal: space.xl,
+    paddingVertical: 12,
     borderRadius: radius.control,
     borderWidth: StyleSheet.hairlineWidth,
   },
@@ -750,7 +758,8 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 12,
+    minHeight: 52,
+    paddingVertical: 13,
     paddingHorizontal: space.lg,
     gap: space.md,
     borderRadius: 10,
